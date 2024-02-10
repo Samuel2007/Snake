@@ -1,5 +1,7 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import styles from "./grid.module.css";
+import Cell from "../cell/cell";
 
 type GridProps = {
   index: number;
@@ -7,7 +9,35 @@ type GridProps = {
 };
 
 function Grid({ index, isSelected }: GridProps) {
-  return <div className={styles.cell}>{index}</div>;
+  useEffect(() => {
+    const downHandler = ({ key }) => {
+      //ArrowUp
+      //ArrowDown
+
+      console.log(key);
+    };
+
+    window.addEventListener("keydown", downHandler);
+
+    return () => {
+      window.removeEventListener("keydown", downHandler);
+    };
+  }, []);
+
+  const cells = Array.from({ length: 121 }, (e, i) => i);
+  console.log(cells);
+  return (
+    <div className={styles.grid}>
+      {cells.map((cell, index) => (
+        <Cell
+          key={cell}
+          index={index}
+          isFruitOnCell={false}
+          otherColor={index % 2 === 0}
+        />
+      ))}
+    </div>
+  );
 }
 
 export default Grid;
