@@ -9,9 +9,22 @@ type CellProps = {
   isSelected?: boolean;
 };
 
+const getCellStyles = (otherColor: boolean, isSelected?: boolean) => {
+  if (isSelected) {
+    return styles.selectedCell;
+  }
+  if (otherColor) {
+    return styles.differentColorCell;
+  }
+  return styles.cell;
+};
+
 function Cell({ index, otherColor, isFruitOnCell, isSelected }: CellProps) {
   return (
-    <div className={otherColor ? styles.cell : styles.differentColorCell}>
+    <div
+      className={`${styles.baseCell} ${getCellStyles(otherColor, isSelected)}`}
+    >
+      {index}
       {isFruitOnCell && <Fruit />}
     </div>
   );
