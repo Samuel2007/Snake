@@ -19,42 +19,53 @@ function generateRandom() {
   return Math.floor(Math.random() * 121);
 }
 
+function mapNewSnake(snakeArray: number[], firstCellOffset: number) {
+  return snakeArray.map((value, index) => {
+    if (index === 0) {
+      return value + firstCellOffset;
+    } else {
+      return snakeArray[index - 1];
+    }
+  });
+}
+
 function Grid({ index, isSelected }: GridProps) {
-  const [currentCell, setCurrentCell] = useState(60);
+  const [currentCells, setCurrentCells] = useState([60, 61, 62]);
   const [cellWithFruit, setCellWithFruit] = useState(generateRandom());
 
   const inputHandler = ({ key }: KeyHandlerType) => {
     switch (key) {
       case "ArrowDown":
-        setCurrentCell((currentValue) => {
-          if (currentValue >= 110) {
-            return 60;
+        setCurrentCells((currentValues) => {
+          if (currentValues[0] >= 110) {
+            return [60];
           }
-          return currentValue + 11;
+          return mapNewSnake(currentValues, 11);
         });
         break;
       case "ArrowUp":
-        setCurrentCell((currentValue) => {
-          if (currentValue <= 10) {
-            return 60;
+        setCurrentCells((currentValues) => {
+          if (currentValues[0] <= 10) {
+            return [60];
           }
-          return currentValue - 11;
+
+          return mapNewSnake(currentValues, -11);
         });
         break;
       case "ArrowLeft":
-        setCurrentCell((currentValue) => {
-          if (leftBoundry.includes(currentValue)) {
-            return 60;
+        setCurrentCells((currentValues) => {
+          if (leftBoundry.includes(currentValues[0])) {
+            return [60];
           }
-          return currentValue - 1;
+          return mapNewSnake(currentValues, -1);
         });
         break;
       case "ArrowRight":
-        setCurrentCell((currentValue) => {
-          if (rightBoundry.includes(currentValue)) {
-            return 60;
+        setCurrentCells((currentValues) => {
+          if (rightBoundry.includes(currentValues[0])) {
+            return [60];
           }
-          return currentValue + 1;
+          return mapNewSnake(currentValues, 1);
         });
         break;
     }
@@ -73,10 +84,10 @@ function Grid({ index, isSelected }: GridProps) {
   const cells = Array.from({ length: 121 }, (e, i) => i);
 
   useEffect(() => {
-    if (cellWithFruit === currentCell) {
+    if (currentCells.includes(cellWithFruit)) {
       setCellWithFruit(generateRandom());
     }
-  }, [currentCell, cellWithFruit]);
+  }, [currentCells, cellWithFruit]);
 
   return (
     <div className={styles.grid}>
@@ -85,7 +96,7 @@ function Grid({ index, isSelected }: GridProps) {
           key={cell}
           index={index}
           otherColor={index % 2 === 0}
-          isSelected={cell === currentCell}
+          isSelected={currentCells.includes(cell)}
           isFruitOnCell={cell === cellWithFruit}
         />
       ))}
