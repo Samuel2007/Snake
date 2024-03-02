@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./grid.module.css";
 import Cell from "../cell/cell";
 
@@ -19,37 +19,64 @@ function generateRandom() {
   return Math.floor(Math.random() * 121);
 }
 
-function mapNewSnake(snakeArray: number[], firstCellOffset: number) {
-  return snakeArray.map((value, index) => {
+function mapNewSnake(
+  snakeArray: number[],
+  firstCellOffset: number,
+  cellWithFruit: number
+) {
+  const updatedSnakeArray = snakeArray.map((value, index) => {
     if (index === 0) {
       return value + firstCellOffset;
     } else {
       return snakeArray[index - 1];
     }
   });
+  if (cellWithFruit === snakeArray[0] + firstCellOffset) {
+    return [...updatedSnakeArray, ...snakeArray.slice(-1)];
+  }
+  return updatedSnakeArray;
 }
 
 function Grid({ index, isSelected }: GridProps) {
   const [currentCells, setCurrentCells] = useState([60, 61, 62]);
   const [cellWithFruit, setCellWithFruit] = useState(generateRandom());
 
+  const temporaryCellWithFruit = useRef(cellWithFruit);
+  temporaryCellWithFruit.current = cellWithFruit;
+
+  const currentIntervalRef = useRef<NodeJS.Timer>();
+
   const inputHandler = ({ key }: KeyHandlerType) => {
     switch (key) {
       case "ArrowDown":
-        setCurrentCells((currentValues) => {
-          if (currentValues[0] >= 110) {
-            return [60];
-          }
-          return mapNewSnake(currentValues, 11);
-        });
+        if (currentIntervalRef.current) {
+          clearInterval(currentIntervalRef.current);
+        }
+        currentIntervalRef.current = setInterval(() => {
+          setCurrentCells((currentValues) => {
+            if (currentValues[0] >= 110) {
+              return [60];
+            }
+
+            return mapNewSnake(
+              currentValues,
+              11,
+              temporaryCellWithFruit.current
+            );
+          });
+        }, 1000);
+
         break;
       case "ArrowUp":
         setCurrentCells((currentValues) => {
           if (currentValues[0] <= 10) {
             return [60];
           }
-
-          return mapNewSnake(currentValues, -11);
+          return mapNewSnake(
+            currentValues,
+            -11,
+            temporaryCellWithFruit.current
+          );
         });
         break;
       case "ArrowLeft":
@@ -57,7 +84,7 @@ function Grid({ index, isSelected }: GridProps) {
           if (leftBoundry.includes(currentValues[0])) {
             return [60];
           }
-          return mapNewSnake(currentValues, -1);
+          return mapNewSnake(currentValues, -1, temporaryCellWithFruit.current);
         });
         break;
       case "ArrowRight":
@@ -65,7 +92,7 @@ function Grid({ index, isSelected }: GridProps) {
           if (rightBoundry.includes(currentValues[0])) {
             return [60];
           }
-          return mapNewSnake(currentValues, 1);
+          return mapNewSnake(currentValues, 1, temporaryCellWithFruit.current);
         });
         break;
     }
