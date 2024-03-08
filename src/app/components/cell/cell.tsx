@@ -24,7 +24,6 @@ function Cell({ index, otherColor, isFruitOnCell, isSelected }: CellProps) {
     <div
       className={`${styles.baseCell} ${getCellStyles(otherColor, isSelected)}`}
     >
-      {index}
       {isFruitOnCell && <Fruit />}
     </div>
   );

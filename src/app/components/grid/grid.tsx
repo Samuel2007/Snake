@@ -44,56 +44,85 @@ function Grid({ index, isSelected }: GridProps) {
   const temporaryCellWithFruit = useRef(cellWithFruit);
   temporaryCellWithFruit.current = cellWithFruit;
 
-  const currentIntervalRef = useRef<NodeJS.Timer>();
+  const currentIntervalRef: { current: NodeJS.Timeout | null } = useRef(null);
+  const lastPressedArrow: { current: string | null } = useRef(null);
+
+  // const {isGameOver, setIsGameOver} = useGameOver(currentCells)
 
   const inputHandler = ({ key }: KeyHandlerType) => {
+    function setCellsDirection(firstCellOffset: number) {
+      setCurrentCells((currentValues) => {
+        return mapNewSnake(
+          currentValues,
+          firstCellOffset,
+          temporaryCellWithFruit.current
+        );
+      });
+    }
+
     switch (key) {
       case "ArrowDown":
+        if (lastPressedArrow.current === "Down") {
+          break;
+        }
+
         if (currentIntervalRef.current) {
           clearInterval(currentIntervalRef.current);
         }
+
+        setCellsDirection(11);
         currentIntervalRef.current = setInterval(() => {
-          setCurrentCells((currentValues) => {
-            if (currentValues[0] >= 110) {
-              return [60];
-            }
-
-            return mapNewSnake(
-              currentValues,
-              11,
-              temporaryCellWithFruit.current
-            );
-          });
-        }, 1000);
-
+          setCellsDirection(11);
+        }, 300);
+        lastPressedArrow.current = "Down";
         break;
+
       case "ArrowUp":
-        setCurrentCells((currentValues) => {
-          if (currentValues[0] <= 10) {
-            return [60];
-          }
-          return mapNewSnake(
-            currentValues,
-            -11,
-            temporaryCellWithFruit.current
-          );
-        });
+        if (lastPressedArrow.current === "Up") {
+          break;
+        }
+
+        if (currentIntervalRef.current) {
+          clearInterval(currentIntervalRef.current);
+        }
+
+        setCellsDirection(-11);
+        currentIntervalRef.current = setInterval(() => {
+          setCellsDirection(-11);
+        }, 300);
+        lastPressedArrow.current = "Up";
         break;
+
       case "ArrowLeft":
-        setCurrentCells((currentValues) => {
-          if (leftBoundry.includes(currentValues[0])) {
-            return [60];
-          }
-          return mapNewSnake(currentValues, -1, temporaryCellWithFruit.current);
-        });
+        if (lastPressedArrow.current === "Left") {
+          break;
+        }
+
+        if (currentIntervalRef.current) {
+          clearInterval(currentIntervalRef.current);
+        }
+
+        setCellsDirection(-1);
+        currentIntervalRef.current = setInterval(() => {
+          setCellsDirection(-1);
+        }, 300);
+        lastPressedArrow.current = "Left";
         break;
+
       case "ArrowRight":
-        setCurrentCells((currentValues) => {
-          if (rightBoundry.includes(currentValues[0])) {
-            return [60];
-          }
-          return mapNewSnake(currentValues, 1, temporaryCellWithFruit.current);
-        });
+        if (lastPressedArrow.current === "Right") {
+          break;
+        }
+
+        if (currentIntervalRef.current) {
+          clearInterval(currentIntervalRef.current);
+        }
+
+        setCellsDirection(1);
+        currentIntervalRef.current = setInterval(() => {
+          setCellsDirection(1);
+        }, 300);
+        lastPressedArrow.current = "Right";
         break;
     }
   };
