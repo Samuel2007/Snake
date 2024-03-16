@@ -2,14 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./grid.module.css";
 import Cell from "../cell/cell";
-
-const leftBoundry = [0, 11, 22, 33, 44, 55, 66, 77, 88, 99, 110];
-const rightBoundry = [10, 21, 32, 43, 54, 65, 76, 87, 98, 109, 120];
-
-type GridProps = {
-  index: number;
-  isSelected?: boolean;
-};
+import { useGameOver } from "@/app/hooks/useGameOver";
 
 type KeyHandlerType = {
   key: "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
@@ -37,7 +30,7 @@ function mapNewSnake(
   return updatedSnakeArray;
 }
 
-function Grid({ index, isSelected }: GridProps) {
+function Grid() {
   const [currentCells, setCurrentCells] = useState([60, 61, 62]);
   const [cellWithFruit, setCellWithFruit] = useState(generateRandom());
 
@@ -47,7 +40,7 @@ function Grid({ index, isSelected }: GridProps) {
   const currentIntervalRef: { current: NodeJS.Timeout | null } = useRef(null);
   const lastPressedArrow: { current: string | null } = useRef(null);
 
-  // const {isGameOver, setIsGameOver} = useGameOver(currentCells)
+  const isGameOver = useGameOver(currentCells, lastPressedArrow.current);
 
   const inputHandler = ({ key }: KeyHandlerType) => {
     function setCellsDirection(firstCellOffset: number) {
@@ -156,6 +149,15 @@ function Grid({ index, isSelected }: GridProps) {
           isFruitOnCell={cell === cellWithFruit}
         />
       ))}
+      <div
+        style={{
+          backgroundColor: isGameOver ? "red" : "white",
+          width: 50,
+          height: 50,
+        }}
+      >
+        {isGameOver}
+      </div>
     </div>
   );
 }
