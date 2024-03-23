@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./grid.module.css";
 import Cell from "../cell/cell";
 import { useGameOver } from "@/app/hooks/useGameOver";
+import GameOverUi from "../gameOverUi/gameOverUi";
 
 type KeyHandlerType = {
   key: "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
@@ -40,7 +41,10 @@ function Grid() {
   const currentIntervalRef: { current: NodeJS.Timeout | null } = useRef(null);
   const lastPressedArrow: { current: string | null } = useRef(null);
 
-  const isGameOver = useGameOver(currentCells, lastPressedArrow.current);
+  const { isGameOver, setIsGameOver } = useGameOver(
+    currentCells,
+    lastPressedArrow.current
+  );
 
   const inputHandler = ({ key }: KeyHandlerType) => {
     function setCellsDirection(firstCellOffset: number) {
@@ -55,7 +59,11 @@ function Grid() {
 
     switch (key) {
       case "ArrowDown":
-        if (lastPressedArrow.current === "Down") {
+        console.log("currentIntervalRef.current", currentIntervalRef.current);
+        if (
+          lastPressedArrow.current === "Down" ||
+          lastPressedArrow.current === "Up"
+        ) {
           break;
         }
 
@@ -71,7 +79,10 @@ function Grid() {
         break;
 
       case "ArrowUp":
-        if (lastPressedArrow.current === "Up") {
+        if (
+          lastPressedArrow.current === "Up" ||
+          lastPressedArrow.current === "Down"
+        ) {
           break;
         }
 
@@ -87,7 +98,10 @@ function Grid() {
         break;
 
       case "ArrowLeft":
-        if (lastPressedArrow.current === "Left") {
+        if (
+          lastPressedArrow.current === "Left" ||
+          lastPressedArrow.current === "Right"
+        ) {
           break;
         }
 
@@ -103,7 +117,11 @@ function Grid() {
         break;
 
       case "ArrowRight":
-        if (lastPressedArrow.current === "Right") {
+        if (
+          lastPressedArrow.current === "Right" ||
+          lastPressedArrow.current === "Left" ||
+          !lastPressedArrow.current
+        ) {
           break;
         }
 
@@ -138,6 +156,21 @@ function Grid() {
     }
   }, [currentCells, cellWithFruit]);
 
+  const handlePlayAgin = () => {
+    setIsGameOver(false);
+    setCurrentCells([60, 61, 62]);
+    lastPressedArrow.current = null;
+    if (currentIntervalRef.current) {
+      clearInterval(currentIntervalRef.current);
+    }
+  };
+
+  useEffect(() => {
+    if (isGameOver) {
+      setCurrentCells([]);
+    }
+  }, [isGameOver]);
+
   return (
     <div className={styles.grid}>
       {cells.map((cell, index) => (
@@ -149,15 +182,7 @@ function Grid() {
           isFruitOnCell={cell === cellWithFruit}
         />
       ))}
-      <div
-        style={{
-          backgroundColor: isGameOver ? "red" : "white",
-          width: 50,
-          height: 50,
-        }}
-      >
-        {isGameOver}
-      </div>
+      <GameOverUi isGameOver={isGameOver} handlePlayAgin={handlePlayAgin} />
     </div>
   );
 }

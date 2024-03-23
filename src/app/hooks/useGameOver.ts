@@ -24,5 +24,5 @@ export const useGameOver = (
     }
   }, [currentCells, lastPressedArrow]);
 
-  return isGameOver;
+  return { isGameOver, setIsGameOver };
 };
