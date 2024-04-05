@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./grid.module.css";
 import Cell from "../cell/cell";
 import { useGameOver } from "@/app/hooks/useGameOver";

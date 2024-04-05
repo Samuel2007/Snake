@@ -5,7 +5,7 @@ const Grid = dynamic(() => import("./components/grid/grid"), { ssr: false });
 export default function Home() {
   return (
     <div className="grid">
-      <Grid index={1} />
+      <Grid />
     </div>
   );
 }
