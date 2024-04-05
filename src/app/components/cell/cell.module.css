@@ -3,16 +3,21 @@
   width: 50px;
   border-width: 1px;
   border-color: black;
+  background-color: white;
   align-items: center;
   justify-content: center;
   display: flex;
-}
-.cell {
-  background-color: white;
 }
 .differentColorCell {
   background-color: grey;
 }
 .selectedCell {
   background-color: blue;
+  height: 25px;
+  width: 25px;
+}
+.snakeHead {
+  background-color: blue;
+  height: 40px;
+  width: 40px;
 }

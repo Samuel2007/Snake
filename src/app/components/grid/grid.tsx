@@ -159,30 +159,29 @@ function Grid() {
   const handlePlayAgin = () => {
     setIsGameOver(false);
     setCurrentCells([60, 61, 62]);
+    setCellWithFruit(generateRandom());
     lastPressedArrow.current = null;
     if (currentIntervalRef.current) {
       clearInterval(currentIntervalRef.current);
     }
   };
 
-  useEffect(() => {
-    if (isGameOver) {
-      setCurrentCells([]);
-    }
-  }, [isGameOver]);
-
   return (
     <div className={styles.grid}>
       {cells.map((cell, index) => (
         <Cell
           key={cell}
-          index={index}
           otherColor={index % 2 === 0}
-          isSelected={currentCells.includes(cell)}
+          isHead={cell === currentCells[0] && !isGameOver}
+          isSelected={currentCells.includes(cell) && !isGameOver}
           isFruitOnCell={cell === cellWithFruit}
         />
       ))}
-      <GameOverUi isGameOver={isGameOver} handlePlayAgin={handlePlayAgin} />
+      <GameOverUi
+        isGameOver={isGameOver}
+        handlePlayAgin={handlePlayAgin}
+        snakeLength={currentCells.length}
+      />
     </div>
   );
 }

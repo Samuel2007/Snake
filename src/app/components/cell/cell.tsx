@@ -3,27 +3,29 @@ import styles from "./cell.module.css";
 import Fruit from "../fruit/fruit";
 
 type CellProps = {
-  index: number;
   otherColor: boolean;
   isFruitOnCell: boolean;
   isSelected?: boolean;
+  isHead: boolean;
 };
 
-const getCellStyles = (otherColor: boolean, isSelected?: boolean) => {
+const getCellStyles = (isHead: boolean, isSelected?: boolean) => {
+  if (isHead) {
+    return styles.snakeHead;
+  }
   if (isSelected) {
     return styles.selectedCell;
   }
-  if (otherColor) {
-    return styles.differentColorCell;
-  }
-  return styles.cell;
 };
 
-function Cell({ index, otherColor, isFruitOnCell, isSelected }: CellProps) {
+function Cell({ otherColor, isFruitOnCell, isSelected, isHead }: CellProps) {
   return (
     <div
-      className={`${styles.baseCell} ${getCellStyles(otherColor, isSelected)}`}
+      className={`${styles.baseCell} ${
+        otherColor && styles.differentColorCell
+      }`}
     >
+      <div className={` ${getCellStyles(isHead, isSelected)}`}></div>
       {isFruitOnCell && <Fruit />}
     </div>
   );

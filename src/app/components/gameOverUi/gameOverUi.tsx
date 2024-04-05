@@ -18,15 +18,16 @@ const style = {
 type GameOverUiProps = {
   isGameOver: boolean;
   handlePlayAgin: VoidFunction;
+  snakeLength: number;
 };
 
 export default function GameOverUi({
   isGameOver,
   handlePlayAgin,
+  snakeLength,
 }: GameOverUiProps) {
   return (
     <div>
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
         open={isGameOver}
         onClose={handlePlayAgin}
@@ -35,7 +36,8 @@ export default function GameOverUi({
       >
         <Box sx={{ ...style, width: 400 }}>
           <h2 id="parent-modal-title">Game Over</h2>
-          <p id="parent-modal-description">Retry?</p>
+          <h2 id="parent-modal-title">Snake Size: {snakeLength}</h2>
+          <Button onClick={handlePlayAgin}>Retry?</Button>
         </Box>
       </Modal>
     </div>
